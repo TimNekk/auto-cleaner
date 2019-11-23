@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="images">
+    <file>setting-icon-2.jpg</file>
+  </qresource>
+</RCC>

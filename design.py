@@ -3,6 +3,7 @@ import sys
 import os
 import shutil
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
 
@@ -171,7 +172,6 @@ class Ui_MainWindow(object):
 
         else:
             self.mainLabel.setText('Invalid Path')
-
 
 
 if __name__ == "__main__":
