@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
                                  "    padding: 0 6;\n"
                                  "}\n"
                                  "\n"
-                                 ".QPushButton {\n"
+                                 ".QPushButton{\n"
                                  "    border-radius: 7px;\n"
                                  "    background-color: rgb(60, 60, 60);\n"
                                  "    padding: 0 5;\n"
@@ -49,9 +49,13 @@ class Ui_MainWindow(object):
                                  "    background-color: rgb(50, 50, 50);\n"
                                  "}\n"
                                  "\n"
-                                 "#clearButton {\n"
+                                 "#clearButton, #browserButton {\n"
                                  "    color: white;\n"
                                  "    border-radius: 20px;\n"
+                                 "}\n"
+                                 "\n"
+                                 "#browserButton {\n"
+                                 "    border-radius: 7px;\n"
                                  "}\n"
                                  "\n"
                                  "QMenuBar {\n"
@@ -160,8 +164,22 @@ class Ui_MainWindow(object):
         self.addButton.setAutoDefault(False)
         self.addButton.setObjectName("addButton")
         self.addButton.clicked.connect(self.add_button_clicked)
-
         self.middleWidget.addWidget(self.addButton)
+
+
+        # browserButton
+
+        self.browserButton = QtWidgets.QPushButton(self.centralWidget)
+        self.browserButton.setSizePolicy(sizePolicy)
+        self.browserButton.setMinimumSize(QtCore.QSize(100, 25))
+        font = QtGui.QFont()
+        font.setFamily("8BIT WONDER")
+        self.browserButton.setFont(font)
+        self.browserButton.setAutoDefault(False)
+        self.browserButton.setObjectName("browserButton")
+        self.browserButton.clicked.connect(self.open_file_browser)
+        self.middleWidget.addWidget(self.browserButton)
+
         self.verticalLayout.addLayout(self.middleWidget)
 
         # bottomWidget
@@ -237,12 +255,30 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        # trayIcon
+
+        self.trayIcon = QtWidgets.QSystemTrayIcon()
+        self.trayIcon.setIcon(MainWindow.style().standardIcon(QtWidgets.QStyle.SP_DialogResetButton))
+        show_action = QtWidgets.QAction("Show", MainWindow)
+        quit_action = QtWidgets.QAction("Exit", MainWindow)
+        hide_action = QtWidgets.QAction("Hide", MainWindow)
+        show_action.triggered.connect(MainWindow.show)
+        hide_action.triggered.connect(MainWindow.hide)
+        quit_action.triggered.connect(MainWindow.close)
+        tray_menu = QtWidgets.QMenu()
+        tray_menu.addAction(show_action)
+        tray_menu.addAction(hide_action)
+        tray_menu.addAction(quit_action)
+        self.trayIcon.setContextMenu(tray_menu)
+        self.trayIcon.show()
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Auto Cleaner"))
         self.mainLabel.setText(_translate("MainWindow", "Enter directory for cleaning"))
         self.settingsButton.setText(_translate("MainWindow", "⚙"))
         self.addButton.setText(_translate("MainWindow", "ADD"))
+        self.browserButton.setText(_translate("MainWindow", "Browse"))
         self.clearButton.setText(_translate("MainWindow", "START"))
         self.actionSettings.setText(_translate("MainWindow", "Settings"))
 
@@ -377,7 +413,7 @@ class Ui_MainWindow(object):
         popup.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
         popup.setDefaultButton(QtWidgets.QMessageBox.No)
         popup.buttonClicked.connect(self.popup_button_pressed)
-        popup.exec()
+        popup.exec_()
 
     def popup_button_pressed(self, button):
         if button.text() == '&No':
@@ -385,9 +421,15 @@ class Ui_MainWindow(object):
         else:
             self.popup_status = True
 
+    def open_file_browser(self):
+        filename = QtWidgets.QFileDialog.getOpenFileName()
+        filename = filename[0].split('/')
+        filename.pop(-1)
+        filename = '/'.join(filename)
+        self.dirLineEdit.setText(filename)
+
 
 if __name__ == "__main__":
-
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
