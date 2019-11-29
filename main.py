@@ -3,6 +3,10 @@ import sys
 import os
 import shutil
 import pickle
+from datetime import datetime
+from settings import Ui_SettingsWindow
+import threading
+from time import sleep
 
 
 class Ui_MainWindow(object):
@@ -127,6 +131,7 @@ class Ui_MainWindow(object):
         self.settingsButton.setObjectName("settingsButton")
         self.topWidget.addWidget(self.settingsButton)
         self.verticalLayout.addLayout(self.topWidget)
+        self.settingsButton.clicked.connect(self.open_settings)
 
         # middleWidget
 
@@ -282,17 +287,18 @@ class Ui_MainWindow(object):
         self.clearButton.setText(_translate("MainWindow", "START"))
         self.actionSettings.setText(_translate("MainWindow", "Settings"))
 
-    def clear_button_clicked(self):
+    def clear_button_clicked(self, skip_alert=False):
 
-        dirs = self.get_dirs()
-        if not dirs:
+        user_data = self.get_user_data()
+        if not user_data['dirs']:
             self.mainLabel.setText('No paths added')
         else:
-            self.show_popup()
-            if self.popup_status:
+            if not skip_alert:
+                self.show_popup()
+            if self.popup_status or skip_alert:
                 files_deleted = 0
                 files_size = 0
-                for path in dirs:
+                for path in user_data['dirs']:
                     if os.path.isdir(path):
                         files = os.listdir(path)
                         for file in files:
@@ -319,6 +325,9 @@ class Ui_MainWindow(object):
                 else:
                     self.mainLabel.setText(str(files_deleted) + ' files deleted ( ' +
                                            self.get_file_size(files_size) + ' )')
+
+                user_data['last_clean'] = datetime.now()
+                self.load_user_data(user_data)
             else:
                 self.mainLabel.setText("Enter directory for cleaning")
 
@@ -326,9 +335,9 @@ class Ui_MainWindow(object):
         path = self.dirLineEdit.text()
 
         if os.path.isdir(path):
-            dirs = self.get_dirs()
-            dirs.append(path)
-            self.load_dirs(dirs)
+            user_data = self.get_user_data()
+            user_data['dirs'].append(path)
+            self.load_user_data(user_data)
 
             self.mainLabel.setText("Enter directory for cleaning")
             self.update_scroll_area()
@@ -341,7 +350,7 @@ class Ui_MainWindow(object):
         while self.formLayout.count() != 0:
             self.formLayout.removeRow(0)
 
-        for n in range(0, len(self.get_dirs())):
+        for n in range(0, len(self.get_user_data()['dirs'])):
 
             # xButton
 
@@ -370,27 +379,30 @@ class Ui_MainWindow(object):
             font.setPointSize(7)
             self.check_box.setFont(font)
             self.check_box.setObjectName('checkBox_' + str(n))
-            self.check_box.setText(self.get_dirs()[n])
+            self.check_box.setText(self.get_user_data()['dirs'][n])
 
             self.formLayout.setWidget(n, QtWidgets.QFormLayout.FieldRole, self.check_box)
 
     def remove_dir(self, n):
-        dirs = self.get_dirs()
-        dirs.pop(n)
-        self.load_dirs(dirs)
+        user_data = self.get_user_data()
+        user_data['dirs'].pop(n)
+        self.load_user_data(user_data)
         self.update_scroll_area()
 
-    def get_dirs(self):
+    def get_user_data(self):
         with open('user.data', 'rb') as file:
             return pickle.load(file)
 
-    def load_dirs(self, dirs):
+    def load_user_data(self, user_data):
         with open('user.data', 'wb') as file:
-            pickle.dump(dirs, file)
+            pickle.dump(user_data, file)
 
-    def reset_dirs(self):
+    def reset_user_data(self):
         with open('user.data', 'wb') as file:
-            pickle.dump([], file)
+            pickle.dump({'dirs': [],
+                         'settings': {'win_start': True,
+                                      'auto_clean': 'week'},
+                         'last_clean': {}}, file)
 
     def get_file_size(self, file_size):
         file_size = file_size/1024
@@ -428,6 +440,33 @@ class Ui_MainWindow(object):
         filename = '/'.join(filename)
         self.dirLineEdit.setText(filename)
 
+    def open_settings(self):
+        self.settingsWindow = QtWidgets.QMainWindow()
+        self.settingsUi = Ui_SettingsWindow()
+        self.settingsUi.setupUi(self.settingsWindow)
+        self.settingsUi.update_ui()
+        self.settingsWindow.show()
+
+    def auto_cleaning(self):
+        while True:
+            interval = self.get_user_data()['settings']['auto_clean']
+            last_clean = self.get_user_data()['last_clean']
+            last_clean = datetime(2019, 11, 28)
+            delta = datetime.now() - last_clean
+            if (interval == 'hour' and (delta.seconds / 3600) >= 1) or \
+                    (interval == 'day' and delta.days >= 1) or \
+                    (interval == 'week' and delta.days >= 7) or \
+                    (interval == '2weeks' and delta.days >= 14) or \
+                    (interval == 'month' and delta.days >= 30):
+                self.clear_button_clicked(True)
+                print('auto cleared')
+            print('checked')
+            sleep(10)
+
+    def start_threads(self):
+        auto_cleaner = threading.Thread(target=self.auto_cleaning, name='auto_cleaner')
+        auto_cleaner.start()
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
@@ -435,5 +474,6 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     ui.update_scroll_area()
+    ui.start_threads()
     MainWindow.show()
     sys.exit(app.exec_())

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SettingsWindow</class>
+ <widget class="QMainWindow" name="SettingsWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>214</width>
+    <height>169</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>214</width>
+    <height>169</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>214</width>
+    <height>169</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+	color: white;
+}
+
+.QMainWindow {
+	background-color: rgb(40, 40, 40);
+	border: none;
+}
+
+.QPushButton {
+	border-radius: 7px;
+	background-color: rgb(60, 60, 60);
+	transition-duration: 1s;
+	padding: 0 5;
+	color: rgb(255, 44, 44);
+}
+
+.QPushButton:hover {
+	background-color: rgb(50, 50, 50);
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QCheckBox" name="startCheckbox">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>9</y>
+      <width>114</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start with windows</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="HourButton">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>72</y>
+      <width>82</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Hour</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="DayButton">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>90</y>
+      <width>82</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Day</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="weekButton">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>108</y>
+      <width>82</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Week</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="twoWeeksButton">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>126</y>
+      <width>82</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>2 Weeks</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="MonthButton">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>144</y>
+      <width>82</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Month</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="mainLabel">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>36</y>
+      <width>83</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Autoclean every:</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="DisableButton">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>54</y>
+      <width>82</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disable</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="resetButton">
+    <property name="geometry">
+     <rect>
+      <x>126</x>
+      <y>135</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>8BIT WONDER</family>
+     </font>
+    </property>
+    <property name="text">
+     <string>Reset</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
