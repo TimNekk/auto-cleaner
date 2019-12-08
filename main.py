@@ -401,8 +401,9 @@ class Ui_MainWindow(object):
         with open('user.data', 'wb') as file:
             pickle.dump({'dirs': [],
                          'settings': {'win_start': True,
+                                      'min_start': True,
                                       'auto_clean': 'week'},
-                         'last_clean': {}}, file)
+                         'last_clean': datetime.now()}, file)
 
     def get_file_size(self, file_size):
         file_size = file_size/1024
@@ -446,12 +447,13 @@ class Ui_MainWindow(object):
         self.settingsUi.setupUi(self.settingsWindow)
         self.settingsUi.update_ui()
         self.settingsWindow.show()
+        self.settingsUi.saveButton.clicked.connect(lambda: self.settingsWindow.close())
 
     def auto_cleaning(self):
         while True:
             interval = self.get_user_data()['settings']['auto_clean']
             last_clean = self.get_user_data()['last_clean']
-            last_clean = datetime(2019, 11, 28)
+            print(last_clean)
             delta = datetime.now() - last_clean
             if (interval == 'hour' and (delta.seconds / 3600) >= 1) or \
                     (interval == 'day' and delta.days >= 1) or \
@@ -473,7 +475,9 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    # ui.reset_user_data()
     ui.update_scroll_area()
     ui.start_threads()
-    MainWindow.show()
+    if not ui.get_user_data()['settings']['min_start']:
+        MainWindow.show()
     sys.exit(app.exec_())

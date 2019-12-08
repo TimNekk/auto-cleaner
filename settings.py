@@ -5,8 +5,8 @@ class Ui_SettingsWindow(object):
     def setupUi(self, SettingsWindow):
         SettingsWindow.setObjectName("SettingsWindow")
         SettingsWindow.resize(214, 169)
-        SettingsWindow.setMinimumSize(QtCore.QSize(214, 169))
-        SettingsWindow.setMaximumSize(QtCore.QSize(214, 169))
+        SettingsWindow.setMinimumSize(QtCore.QSize(214, 200))
+        SettingsWindow.setMaximumSize(QtCore.QSize(214, 200))
         SettingsWindow.setStyleSheet("* {\n"
                                      "    color: white;\n"
                                      "}\n"
@@ -36,37 +36,42 @@ class Ui_SettingsWindow(object):
         self.startCheckbox.setObjectName("startCheckbox")
         self.startCheckbox.setChecked(True)
 
+        self.minimizedCheckbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.minimizedCheckbox.setGeometry(QtCore.QRect(18, 30, 130, 17))
+        self.minimizedCheckbox.setObjectName("minimizedCheckbox")
+        self.minimizedCheckbox.setChecked(True)
+
         self.hourButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.hourButton.setGeometry(QtCore.QRect(18, 72, 82, 17))
+        self.hourButton.setGeometry(QtCore.QRect(18, 75, 82, 17))
         self.hourButton.setObjectName("HourButton")
 
         self.dayButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.dayButton.setGeometry(QtCore.QRect(18, 90, 82, 17))
+        self.dayButton.setGeometry(QtCore.QRect(18, 93, 82, 17))
         self.dayButton.setObjectName("DayButton")
 
         self.weekButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.weekButton.setGeometry(QtCore.QRect(18, 108, 82, 17))
+        self.weekButton.setGeometry(QtCore.QRect(18, 111, 82, 17))
         self.weekButton.setChecked(True)
         self.weekButton.setObjectName("weekButton")
 
         self.twoWeeksButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.twoWeeksButton.setGeometry(QtCore.QRect(18, 126, 82, 17))
+        self.twoWeeksButton.setGeometry(QtCore.QRect(18, 129, 82, 17))
         self.twoWeeksButton.setObjectName("twoWeeksButton")
 
         self.monthButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.monthButton.setGeometry(QtCore.QRect(18, 144, 82, 17))
+        self.monthButton.setGeometry(QtCore.QRect(18, 147, 82, 17))
         self.monthButton.setObjectName("MonthButton")
 
-        self.mainLabel = QtWidgets.QLabel(self.centralwidget)
-        self.mainLabel.setGeometry(QtCore.QRect(18, 36, 83, 13))
-        self.mainLabel.setObjectName("mainLabel")
-
         self.disableButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.disableButton.setGeometry(QtCore.QRect(18, 54, 82, 17))
+        self.disableButton.setGeometry(QtCore.QRect(18, 165, 82, 17))
         self.disableButton.setObjectName("DisableButton")
 
+        self.mainLabel = QtWidgets.QLabel(self.centralwidget)
+        self.mainLabel.setGeometry(QtCore.QRect(18, 57, 83, 13))
+        self.mainLabel.setObjectName("mainLabel")
+
         self.saveButton = QtWidgets.QPushButton(self.centralwidget)
-        self.saveButton.setGeometry(QtCore.QRect(126, 135, 75, 23))
+        self.saveButton.setGeometry(QtCore.QRect(126, 156, 75, 23))
         font = QtGui.QFont()
         font.setFamily("8BIT WONDER")
         self.saveButton.setFont(font)
@@ -82,12 +87,13 @@ class Ui_SettingsWindow(object):
         _translate = QtCore.QCoreApplication.translate
         SettingsWindow.setWindowTitle(_translate("SettingsWindow", "Settings"))
         self.startCheckbox.setText(_translate("SettingsWindow", "Start with windows"))
+        self.minimizedCheckbox.setText(_translate("SettingsWindow", "Start minimized to tray"))
         self.hourButton.setText(_translate("SettingsWindow", "Hour"))
         self.dayButton.setText(_translate("SettingsWindow", "Day"))
         self.weekButton.setText(_translate("SettingsWindow", "Week"))
         self.twoWeeksButton.setText(_translate("SettingsWindow", "2 Weeks"))
         self.monthButton.setText(_translate("SettingsWindow", "Month"))
-        self.mainLabel.setText(_translate("SettingsWindow", "Autoclean every:"))
+        self.mainLabel.setText(_translate("SettingsWindow", "Auto-clean every:"))
         self.disableButton.setText(_translate("SettingsWindow", "Disable"))
         self.saveButton.setText(_translate("SettingsWindow", "Save"))
 
@@ -109,6 +115,10 @@ class Ui_SettingsWindow(object):
             user_data['settings']['win_start'] = True
         else:
             user_data['settings']['win_start'] = False
+        if self.minimizedCheckbox.isChecked():
+            user_data['settings']['min_start'] = True
+        else:
+            user_data['settings']['min_start'] = False
         self.load_user_data(user_data)
 
     def update_ui(self):
@@ -129,6 +139,10 @@ class Ui_SettingsWindow(object):
             self.startCheckbox.setChecked(True)
         else:
             self.startCheckbox.setChecked(False)
+        if user_data['settings']['min_start']:
+            self.minimizedCheckbox.setChecked(True)
+        else:
+            self.minimizedCheckbox.setChecked(False)
 
     def load_user_data(self, user_data):
         with open('user.data', 'wb') as file:
